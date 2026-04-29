@@ -1,9 +1,9 @@
-package edu.westga.comp2320.babynamestatistics;
+package edu.westga.comp2320.babynamestatistics.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 
-public class HelloController {
+public class MainViewController {
     @FXML
     private Label welcomeText;
 
