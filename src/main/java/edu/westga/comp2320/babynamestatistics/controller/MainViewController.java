@@ -35,9 +35,6 @@ public class MainViewController {
 
     @FXML private ListView<NameRecord> recordsListView;
 
-    @FXML private MenuItem openMenuItem;
-    @FXML private MenuItem saveMenuItem;
-    @FXML private MenuItem aboutMenuItem;
 
     private final NameRecordManager manager = new NameRecordManager();
     private final ObservableList<NameRecord> displayedRecords = FXCollections.observableArrayList();
@@ -102,7 +99,7 @@ public class MainViewController {
     }
 
     private void refreshList() {
-        this.displayedRecords.setAll(this.manager.getAll());
+        this.displayedRecords.setAll(this.manager.getAllSorted());
     }
 
     @FXML
@@ -114,6 +111,7 @@ public class MainViewController {
             Integer frequency = parseOptionalInt(this.frequencyField.getText());
 
             List<NameRecord> results = this.manager.search(name, gender, year, frequency);
+            NameRecordManager.sortRecords(results);
             this.displayedRecords.setAll(results);
         } catch (NumberFormatException ex) {
             this.showError("Year and Frequency must be valid integers.");
@@ -138,9 +136,12 @@ public class MainViewController {
         try {
             String name = this.nameField.getText().trim();
             Character gender = this.getSelectedGender();
+            if (gender == null) {
+                this.showError("Please select a gender.");
+                return;
+            }
             int year = Integer.parseInt(this.yearField.getText().trim());
             int frequency = Integer.parseInt(this.frequencyField.getText().trim());
-
             NameRecord record = new NameRecord(name, gender, year, frequency);
             boolean added = this.manager.add(record);
             if (!added) {

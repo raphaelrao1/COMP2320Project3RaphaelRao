@@ -51,7 +51,7 @@ public class CsvFileHandler {
      */
     public static void save(File file, NameRecordManager manager) throws IOException {
         try (PrintWriter writer = new PrintWriter(new FileWriter(file))) {
-            for (NameRecord record : manager.getAll()) {
+            for (NameRecord record : manager.getAllSorted()) {
                 writer.printf("%s,%c,%d,%d%n",
                         record.getName(),
                         record.getGender(),

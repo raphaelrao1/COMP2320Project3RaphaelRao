@@ -1,7 +1,7 @@
 package edu.westga.comp2320.babynamestatistics.model;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -42,10 +42,9 @@ public class NameRecordManager {
      * Removes the given record.
      *
      * @param record the record to remove
-     * @return true if removed
      */
-    public boolean remove(NameRecord record) {
-        return this.records.remove(record);
+    public void remove(NameRecord record) {
+        this.records.remove(record);
     }
 
     /**
@@ -70,12 +69,33 @@ public class NameRecordManager {
     }
 
     /**
-     * Returns an unmodifiable view of all records.
+     * Returns all records sorted by year (descending), gender
+     * (F before M), frequency (descending), then name (ascending,
+     * case-insensitive).
      *
-     * @return all records
+     * @return a new sorted list
      */
-    public List<NameRecord> getAll() {
-        return Collections.unmodifiableList(this.records);
+    public List<NameRecord> getAllSorted() {
+        List<NameRecord> sorted = new ArrayList<>(this.records);
+        sorted.sort(getDefaultComparator());
+        return sorted;
+    }
+
+    /**
+     * Sorts the given list in place using the default ordering.
+     *
+     * @param records the list to sort
+     */
+    public static void sortRecords(List<NameRecord> records) {
+        records.sort(getDefaultComparator());
+    }
+
+    private static Comparator<NameRecord> getDefaultComparator() {
+        return Comparator
+                .comparingInt(NameRecord::getYear).reversed()
+                .thenComparingInt(record -> record.getGender() == 'F' ? 0 : 1)
+                .thenComparing(Comparator.comparingInt(NameRecord::getFrequency).reversed())
+                .thenComparing(NameRecord::getName, String.CASE_INSENSITIVE_ORDER);
     }
 
     /**
