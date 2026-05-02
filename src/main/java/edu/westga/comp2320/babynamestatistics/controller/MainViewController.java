@@ -7,6 +7,10 @@ import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 
@@ -24,18 +28,15 @@ public class MainViewController {
     public MenuItem openMenuItem;
     public MenuItem saveMenuItem;
     public MenuItem aboutMenuItem;
-    public Label yearErrorLabel;
     public Button prevYearButton;
     public Button nextYearButton;
+    public NumberAxis frequencyAxis;
     @FXML private TextField nameField;
     @FXML private RadioButton maleRadio;
     @FXML private RadioButton femaleRadio;
     @FXML private ToggleGroup genderGroup;
     @FXML private TextField yearField;
     @FXML private TextField frequencyField;
-    @FXML private TextField popularYearField;
-    @FXML private Label femalePopularLabel;
-    @FXML private Label malePopularLabel;
 
     @FXML private Button searchButton;
     @FXML private Button addButton;
@@ -43,6 +44,12 @@ public class MainViewController {
     @FXML private Button deleteAllButton;
 
     @FXML private ListView<NameRecord> recordsListView;
+
+
+    @FXML private TextField popularYearField;
+    @FXML private Label yearErrorLabel;
+    @FXML private BarChart<String, Number> popularChart;
+    @FXML private CategoryAxis nameAxis;
 
 
     private final NameRecordManager manager = new NameRecordManager();
@@ -57,9 +64,9 @@ public class MainViewController {
     }
 
     private void setupPopularNamesPanel() {
-        this.femalePopularLabel.setText("");
-        this.malePopularLabel.setText("");
         this.yearErrorLabel.setText("");
+        this.nameAxis.setAnimated(false);
+
         this.popularYearField.textProperty().addListener((_, _, newVal) -> {
             if (this.isValidYearOrEmpty(newVal)) {
                 this.yearErrorLabel.setText("");
@@ -67,6 +74,7 @@ public class MainViewController {
                 this.yearErrorLabel.setText("Enter a valid Year");
             }
         });
+
         this.popularYearField.focusedProperty().addListener((_, _, isFocused) -> {
             if (!isFocused) {
                 this.updatePopularNames();
@@ -87,39 +95,42 @@ public class MainViewController {
     }
 
     private void updatePopularNames() {
+        this.popularChart.getData().clear();
+        this.popularChart.setTitle("");
+
         String text = this.popularYearField.getText();
         if (text == null || text.isBlank()) {
-            this.femalePopularLabel.setText("");
-            this.malePopularLabel.setText("");
             return;
         }
         try {
             int year = Integer.parseInt(text.trim());
             if (year < 0) {
-                this.femalePopularLabel.setText("");
-                this.malePopularLabel.setText("");
                 return;
             }
+
             List<NameRecord> topFemale = this.manager.topNFor('F', year, 3);
             List<NameRecord> topMale = this.manager.topNFor('M', year, 3);
-            this.femalePopularLabel.setText(formatTopList(topFemale));
-            this.malePopularLabel.setText(formatTopList(topMale));
-        } catch (NumberFormatException ex) {
-            this.femalePopularLabel.setText("");
-            this.malePopularLabel.setText("");
-        }
-    }
 
-    private String formatTopList(List<NameRecord> records) {
-        if (records.isEmpty()) {
-            return "(no data)";
+            XYChart.Series<String, Number> femaleSeries = new XYChart.Series<>();
+            femaleSeries.setName("Top three female names");
+            for (NameRecord record : topFemale) {
+                femaleSeries.getData().add(
+                        new XYChart.Data<>(record.getName(), record.getFrequency()));
+            }
+
+            XYChart.Series<String, Number> maleSeries = new XYChart.Series<>();
+            maleSeries.setName("Top three male names");
+            for (NameRecord record : topMale) {
+                maleSeries.getData().add(
+                        new XYChart.Data<>(record.getName(), record.getFrequency()));
+            }
+
+            this.popularChart.getData().add(femaleSeries);
+            this.popularChart.getData().add(maleSeries);            
+            this.popularChart.setTitle("Frequencies in year " + year);
+        } catch (NumberFormatException ex) {
+            // invalid input — chart already cleared above
         }
-        StringBuilder builder = new StringBuilder();
-        for (NameRecord record : records) {
-            builder.append(record.getName())
-                    .append(" (").append(record.getFrequency()).append(")\n");
-        }
-        return builder.toString().stripTrailing();
     }
 
     private void setupSelectionPopulatesForm() {
@@ -317,7 +328,8 @@ public class MainViewController {
             }
             this.popularYearField.setText(String.valueOf(newYear));
             this.updatePopularNames();
-        } catch (NumberFormatException _) {
+        } catch (NumberFormatException ex) {
+            // invalid year — validation label already shows the error
         }
     }
 }
