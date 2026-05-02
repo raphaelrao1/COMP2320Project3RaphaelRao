@@ -14,11 +14,12 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.westga.comp2320.babynamestatistics.controller.MainViewController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.westga.comp2320.babynamestatistics.controller.MainViewController">
     <MenuBar>
         <Menu mnemonicParsing="false" text="_File">
             <MenuItem fx:id="openMenuItem" mnemonicParsing="false" onAction="#onOpen" text="Open">
@@ -48,8 +49,7 @@
           <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
         </padding>
     </Label>
-    <HBox prefHeight="294.0" prefWidth="600.0" spacing="15.0">
-        <padding>
+    <HBox prefHeight="294.0" prefWidth="600.0" spacing="15.0" VBox.vgrow="ALWAYS">        <padding>
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
         </padding>
         <VBox.margin>
@@ -97,4 +97,33 @@
         </GridPane>
         <ListView fx:id="recordsListView" prefHeight="274.0" prefWidth="300.0" HBox.hgrow="ALWAYS" />
     </HBox>
+    <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0" style="-fx-background-color: #f0f0f0;">
+        <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+        </padding>
+        <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+            <Label text="Most Popular Names">
+                <font>
+                    <Font size="16.0"/>
+                </font>
+            </Label>
+            <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS"/>
+            <Label text="Enter a year:"/>
+            <TextField fx:id="popularYearField" prefWidth="80.0"/>
+        </HBox>
+        <HBox prefHeight="100.0" prefWidth="200.0" spacing="40.0">
+            <padding>
+                <Insets left="10.0"/>
+            </padding>
+            <VBox alignment="CENTER" prefHeight="83.0" prefWidth="682.0" spacing="5.0">
+                <padding>
+                    <Insets left="10.0"/>
+                </padding>
+                <Label text="Most popular female names:"/>
+                <Label fx:id="femalePopularLabel" minHeight="60.0"/>
+                <Label text="Most popular male names:"/>
+                <Label fx:id="malePopularLabel" minHeight="60.0"/>
+            </VBox>
+        </HBox>
+    </VBox>
 </VBox>

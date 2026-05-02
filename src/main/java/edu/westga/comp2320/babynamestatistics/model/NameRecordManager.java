@@ -82,6 +82,28 @@ public class NameRecordManager {
     }
 
     /**
+     * Returns the top N records of the given gender for the given year,
+     * sorted by frequency descending then name ascending.
+     *
+     * @param gender the gender to filter by
+     * @param year   the year to filter by
+     * @param topN   how many to return at most
+     * @return at most topN matching records
+     */
+    public List<NameRecord> topNFor(char gender, int year, int topN) {
+        List<NameRecord> matching = new ArrayList<>();
+        for (NameRecord record : this.records) {
+            if (record.getGender() == gender && record.getYear() == year) {
+                matching.add(record);
+            }
+        }
+        matching.sort(Comparator
+                .comparingInt(NameRecord::getFrequency).reversed()
+                .thenComparing(NameRecord::getName, String.CASE_INSENSITIVE_ORDER));
+        return matching.subList(0, Math.min(topN, matching.size()));
+    }
+
+    /**
      * Sorts the given list in place using the default ordering.
      *
      * @param records the list to sort
