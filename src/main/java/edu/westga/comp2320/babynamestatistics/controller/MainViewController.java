@@ -1,5 +1,6 @@
 package edu.westga.comp2320.babynamestatistics.controller;
 
+import edu.westga.comp2320.babynamestatistics.model.CsvFileHandler;
 import edu.westga.comp2320.babynamestatistics.model.NameRecord;
 import edu.westga.comp2320.babynamestatistics.model.NameRecordManager;
 import javafx.beans.binding.Bindings;
@@ -7,7 +8,10 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.stage.FileChooser;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -169,13 +173,48 @@ public class MainViewController {
 
     @FXML
     private void onOpen() {
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Open CSV File");
+        chooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
+        File file = chooser.showOpenDialog(this.recordsListView.getScene().getWindow());
+        if (file == null) {
+            return;
+        }
+        try {
+            CsvFileHandler.load(file, this.manager);
+            this.refreshList();
+        } catch (IOException ex) {
+            this.showError("Could not load file: " + ex.getMessage());
+        }
     }
 
     @FXML
     private void onSave() {
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Save CSV File");
+        chooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
+        File file = chooser.showSaveDialog(this.recordsListView.getScene().getWindow());
+        if (file == null) {
+            return;
+        }
+        try {
+            CsvFileHandler.save(file, this.manager);
+        } catch (IOException ex) {
+            this.showError("Could not save file: " + ex.getMessage());
+        }
     }
 
     @FXML
     private void onAbout() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Baby Name Frequency App");
+        alert.setHeaderText("Message");
+        alert.setContentText("""
+                Manages the popularity data of baby names over the years.
+                
+                Author: Raphael Rao""");
+        alert.showAndWait();
     }
 }
