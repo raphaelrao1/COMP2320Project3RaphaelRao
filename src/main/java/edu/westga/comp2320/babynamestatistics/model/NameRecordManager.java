@@ -77,4 +77,37 @@ public class NameRecordManager {
     public List<NameRecord> getAll() {
         return Collections.unmodifiableList(this.records);
     }
+
+    /**
+     * Searches for records matching the provided filters.
+     * A null or blank name is treated as a wildcard, as are
+     * null gender, year, and frequency parameters.
+     *
+     * @param name      optional name filter (case-insensitive exact match)
+     * @param gender    optional gender filter ('M', 'F', or null)
+     * @param year      optional year filter
+     * @param frequency optional frequency filter
+     * @return matching records
+     */
+    public List<NameRecord> search(String name, Character gender,
+                                   Integer year, Integer frequency) {
+        List<NameRecord> result = new ArrayList<>();
+        for (NameRecord record : this.records) {
+            if (name != null && !name.isBlank()
+                    && !record.getName().equalsIgnoreCase(name)) {
+                continue;
+            }
+            if (gender != null && record.getGender() != gender) {
+                continue;
+            }
+            if (year != null && record.getYear() != year) {
+                continue;
+            }
+            if (frequency != null && record.getFrequency() != frequency) {
+                continue;
+            }
+            result.add(record);
+        }
+        return result;
+    }
 }
