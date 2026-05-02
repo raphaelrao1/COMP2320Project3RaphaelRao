@@ -24,6 +24,7 @@ public class MainViewController {
     public MenuItem openMenuItem;
     public MenuItem saveMenuItem;
     public MenuItem aboutMenuItem;
+    public Label yearErrorLabel;
     @FXML private TextField nameField;
     @FXML private RadioButton maleRadio;
     @FXML private RadioButton femaleRadio;
@@ -56,11 +57,31 @@ public class MainViewController {
     private void setupPopularNamesPanel() {
         this.femalePopularLabel.setText("");
         this.malePopularLabel.setText("");
+        this.yearErrorLabel.setText("");
+        this.popularYearField.textProperty().addListener((_, _, newVal) -> {
+            if (this.isValidYearOrEmpty(newVal)) {
+                this.yearErrorLabel.setText("");
+            } else {
+                this.yearErrorLabel.setText("Enter a valid Year");
+            }
+        });
         this.popularYearField.focusedProperty().addListener((_, _, isFocused) -> {
             if (!isFocused) {
                 this.updatePopularNames();
             }
         });
+    }
+
+    private boolean isValidYearOrEmpty(String text) {
+        if (text == null || text.isBlank()) {
+            return true;
+        }
+        try {
+            int year = Integer.parseInt(text.trim());
+            return year >= 0;
+        } catch (NumberFormatException ex) {
+            return false;
+        }
     }
 
     private void updatePopularNames() {

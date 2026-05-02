@@ -109,7 +109,10 @@
             </Label>
             <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS"/>
             <Label text="Enter a year:"/>
-            <TextField fx:id="popularYearField" prefWidth="80.0"/>
+            <VBox spacing="2.0">
+                <TextField fx:id="popularYearField" prefWidth="80.0"/>
+                <Label fx:id="yearErrorLabel" style="-fx-text-fill: red;"/>
+            </VBox>
         </HBox>
         <HBox prefHeight="100.0" prefWidth="200.0" spacing="40.0">
             <padding>
