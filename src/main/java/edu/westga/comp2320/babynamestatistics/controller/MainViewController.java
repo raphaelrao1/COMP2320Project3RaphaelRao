@@ -25,6 +25,8 @@ public class MainViewController {
     public MenuItem saveMenuItem;
     public MenuItem aboutMenuItem;
     public Label yearErrorLabel;
+    public Button prevYearButton;
+    public Button nextYearButton;
     @FXML private TextField nameField;
     @FXML private RadioButton maleRadio;
     @FXML private RadioButton femaleRadio;
@@ -291,5 +293,31 @@ public class MainViewController {
                 
                 Author: Raphael Rao""");
         alert.showAndWait();
+    }
+
+    @FXML
+    private void onPrevYear() {
+        this.shiftYear(-1);
+    }
+
+    @FXML
+    private void onNextYear() {
+        this.shiftYear(1);
+    }
+
+    private void shiftYear(int delta) {
+        String text = this.popularYearField.getText();
+        if (text == null || text.isBlank()) {
+            return;
+        }
+        try {
+            int newYear = Integer.parseInt(text.trim()) + delta;
+            if (newYear < 0) {
+                return;
+            }
+            this.popularYearField.setText(String.valueOf(newYear));
+            this.updatePopularNames();
+        } catch (NumberFormatException _) {
+        }
     }
 }
